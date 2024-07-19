@@ -11,11 +11,6 @@ const banners = [
     { src: '/images/banner3.png', alt: 'Banner 3' },
 ];
 
-const additionalImages = [
-    { src: '/images/banner1.png', alt: 'Extra Image 1' },
-    { src: '/images/banner2.png', alt: 'Extra Image 2' },
-];
-
 const Banner: React.FC = () => {
     const [currentSlide, setCurrentSlide] = useState(0);
 
@@ -60,22 +55,15 @@ const Banner: React.FC = () => {
     };
 
     return (
-        <div className="flex justify-center w-full">
-            <div className="w-full md:w-3/4 lg:w-3/4 relative">
+        <div className="flex justify-center mt-2 px-4">
+            <div className="relative w-full max-w-7xl">
                 <Slider {...settings}>
                     {banners.map((banner, index) => (
-                        <div key={index} className="relative h-64 md:h-80 lg:h-96 p-2">
+                        <div key={index} className="relative h-64 md:h-96">
                             <img src={banner.src} alt={banner.alt} className="w-full h-full object-cover rounded-lg" />
                         </div>
                     ))}
                 </Slider>
-                <div className="hidden md:flex md:flex-col md:w-1/3 lg:w-1/3 absolute right-0 top-0 bottom-0 space-y-2 p-2">
-                    {additionalImages.map((image, index) => (
-                        <div key={index} className="relative h-32 md:h-auto">
-                            <img src={image.src} alt={image.alt} className="w-full h-full object-cover rounded-lg" />
-                        </div>
-                    ))}
-                </div>
             </div>
         </div>
     );
