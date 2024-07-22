@@ -1,9 +1,9 @@
 'use client'
 import React, { useEffect, useState } from 'react';
-import ProductCard from '../components/ProductCard';
-import { Product } from '../types/Product';
+import ProductCard from '@/components/ProductCard';
+import { Product } from '@/types/Product';
 import Banner from "@/components/Banner";
-import { getProducts } from '../services/apiService';
+import { getProducts } from '@/services/apiService';
 
 export default function Home() {
     const [products, setProducts] = useState<Product[]>([]);
