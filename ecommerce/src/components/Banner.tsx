@@ -4,15 +4,33 @@ import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import '../styles/SlickCarousel.css';
+import { uploadImage } from '../services/apiService';
 
-const banners = [
+const initialBanners = [
     { src: '/images/banner1.png', alt: 'Banner 1' },
     { src: '/images/banner2.png', alt: 'Banner 2' },
     { src: '/images/banner3.png', alt: 'Banner 3' },
 ];
 
 const Banner: React.FC = () => {
+    const [banners, setBanners] = useState(initialBanners);
     const [currentSlide, setCurrentSlide] = useState(0);
+    const [error, setError] = useState<string | null>(null);
+
+    const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files?.[0];
+        if (file) {
+            try {
+                const imageUrl = await uploadImage(file);
+                console.log('Image URL:', imageUrl);
+
+                // Thêm banner mới vào danh sách
+                setBanners([...banners, { src: imageUrl, alt: 'Uploaded Banner' }]);
+            } catch (err) {
+                setError('Error uploading image');
+            }
+        }
+    };
 
     const CustomPrevArrow = (props: any) => {
         const { className, style, onClick } = props;
@@ -57,6 +75,8 @@ const Banner: React.FC = () => {
     return (
         <div className="flex justify-center mt-2 px-4">
             <div className="relative w-full max-w-7xl">
+                <input type="file" onChange={handleFileChange} />
+                {error && <div className="text-red-500">{error}</div>}
                 <Slider {...settings}>
                     {banners.map((banner, index) => (
                         <div key={index} className="relative h-64 md:h-96">
