@@ -4,13 +4,26 @@ import { API_URL } from '@/config';
 // Lấy danh sách sản phẩm
 export const getProducts = async () => {
     try {
-        console.log('API_URL:', API_URL)
         const response = await axios.get(`${API_URL}/products`);
-        return response.data;
+        const products = response.data.map(product => ({
+            ...product,
+            image: `https://source.unsplash.com/random/400x400?sig=${product.id}`
+        }));
+        return products;
     } catch (error) {
         console.error('Error fetching products:', error);
         throw error;
     }
+};
+
+export const getUnsplashImage = async (query) => {
+    const accessKey = process.env.NEXT_PUBLIC_UNSPLASH_ACCESS_KEY;
+    const response = await fetch(`https://api.unsplash.com/photos/random?query=${query}&client_id=${accessKey}`);
+    if (!response.ok) {
+        throw new Error('Failed to fetch image');
+    }
+    const data = await response.json();
+    return data.urls.regular; // Trả về URL của hình ảnh
 };
 
 // Thêm sản phẩm mới
