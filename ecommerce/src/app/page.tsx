@@ -1,14 +1,15 @@
-'use client'
+'use client';
 import React, { useEffect, useState } from 'react';
 import ProductCard from '@/components/ProductCard';
 import { Product } from '@/types/Product';
 import { getProducts } from '@/services/apiService';
 import Banner from "@/components/Banner";
+import LoadingPage from '@/components/LoadingPage'; // Import the LoadingPage component
 
 export default function Home() {
     const [products, setProducts] = useState<Product[]>([]);
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
+    const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
         const fetchProducts = async () => {
@@ -17,7 +18,7 @@ export default function Home() {
                 setProducts(data);
                 setLoading(false);
             } catch (err) {
-                setError(err);
+                setError('Error fetching products');
                 setLoading(false);
             }
         };
@@ -26,11 +27,11 @@ export default function Home() {
     }, []);
 
     if (loading) {
-        return <div>Loading...</div>;
+        return <LoadingPage />; // Use the LoadingPage component
     }
 
     if (error) {
-        return <div>Error: {error.message}</div>;
+        return <div>Error: {error}</div>;
     }
 
     return (

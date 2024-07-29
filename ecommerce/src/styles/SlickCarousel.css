@@ -43,7 +43,26 @@
 }
 
 .slick-slide img {
+    object-fit: cover;
     width: 100%;
     height: auto;
-    object-fit: cover; /* Đảm bảo hình ảnh luôn giữ tỷ lệ và lấp đầy khung */
+}
+
+@media (max-width: 640px) {
+    .slick-slide {
+        height: 200px; /* Chiều cao cho màn hình nhỏ */
+    }
+}
+
+@media (min-width: 641px) and (max-width: 768px) {
+    .slick-slide {
+        height: 300px; /* Chiều cao cho màn hình vừa phải */
+    }
+}
+
+@media (min-width: 769px) {
+    .slick-slide {
+        height: 400px; /* Chiều cao cho màn hình lớn */
+        width: 50%;
+    }
 }
