@@ -1,10 +1,8 @@
 import { initializeApp } from "firebase/app";
+import { getAuth, GoogleAuthProvider } from "firebase/auth";
 import { getStorage } from "firebase/storage";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
 
-// Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+// Cấu hình Firebase của ứng dụng web của bạn
 const firebaseConfig = {
     apiKey: "AIzaSyCYxjRtnuUpq96H1VDMk6yVS1mx_HaJxV0",
     authDomain: "ecommner.firebaseapp.com",
@@ -15,8 +13,12 @@ const firebaseConfig = {
     measurementId: "G-5RH68JD5Z4"
 };
 
-// Initialize Firebase
+// Khởi tạo Firebase
 const app = initializeApp(firebaseConfig);
+
+// Thiết lập các dịch vụ Firebase
+const auth = getAuth(app);
+const googleProvider = new GoogleAuthProvider();
 const storage = getStorage(app);
 
-export { storage };
+export { app, auth, googleProvider, storage };

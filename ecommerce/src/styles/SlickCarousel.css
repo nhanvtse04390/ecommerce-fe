@@ -36,3 +36,14 @@
 .slick-dots li.slick-active button:before {
     color: #000;
 }
+
+.slick-list {
+    width: 100% !important;
+    overflow: hidden; /* Đảm bảo rằng không có phần nào của ảnh bị tràn ra ngoài */
+}
+
+.slick-slide img {
+    width: 100%;
+    height: auto;
+    object-fit: cover; /* Đảm bảo hình ảnh luôn giữ tỷ lệ và lấp đầy khung */
+}

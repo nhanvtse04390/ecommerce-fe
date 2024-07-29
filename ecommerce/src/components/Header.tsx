@@ -14,9 +14,11 @@ const Header: React.FC = () => {
                 {/* Logo and Company Name */}
                 <div className="flex items-center hidden md:flex">
                     <div className="rounded-full h-12 w-12 overflow-hidden">
-                        <img src="/logo/logo.png" alt="Logo" className="h-full w-full object-cover" />
+                        <a href='/'><img src="/logo/logo.png" alt="Logo" className="h-full w-full object-cover" /></a>
                     </div>
-                    <div className="text-white font-semibold text-lg ml-2">ECOMMERCE</div>
+                    <div className="text-white font-semibold text-lg ml-2">
+                        <a href='/'>ECOMMERCE</a>
+                    </div>
                 </div>
 
                 {/* Search Bar */}
@@ -49,7 +51,7 @@ const Header: React.FC = () => {
                     <ul className="flex space-x-4">
                         <li><a href="#" className="text-white hover:text-gray-300">Home</a></li>
                         <li><a href="#" className="text-white hover:text-gray-300">About</a></li>
-                        <li><a href="#" className="text-white hover:text-gray-300">Services</a></li>
+                        <li><a href="/product/create" className="text-white hover:text-gray-300">Services</a></li>
                         <li><a href="#" className="text-white hover:text-gray-300">Contact</a></li>
                     </ul>
                 </nav>
@@ -61,7 +63,7 @@ const Header: React.FC = () => {
                     <ul className="flex flex-col space-y-2">
                         <li><a href="#" className="text-white hover:text-gray-300">Home</a></li>
                         <li><a href="#" className="text-white hover:text-gray-300">About</a></li>
-                        <li><a href="#" className="text-white hover:text-gray-300">Services</a></li>
+                        <li><a href="/product/create" className="text-white hover:text-gray-300">Services</a></li>
                         <li><a href="#" className="text-white hover:text-gray-300">Contact</a></li>
                     </ul>
                 </nav>

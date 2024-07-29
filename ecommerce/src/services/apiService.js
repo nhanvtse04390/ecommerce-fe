@@ -1,7 +1,27 @@
-import { storage } from './firebaseConfig';
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { app } from './firebaseConfig'; // Đảm bảo rằng bạn đã export app từ firebaseConfig
 import axios from 'axios';
 import { API_URL } from '@/config';
+
+// Khởi tạo Firebase Storage
+const storage = getStorage(app);
+
+// Hàm để lấy URL của các banner từ Firebase Storage
+export const getBannerUrls = async (bannerPaths) => {
+    try {
+        const urls = await Promise.all(
+            bannerPaths.map(async (path) => {
+                const storageRef = ref(storage, path);
+                const url = await getDownloadURL(storageRef);
+                return url;
+            })
+        );
+        return urls;
+    } catch (error) {
+        console.error('Error fetching banner URLs:', error);
+        throw error;
+    }
+};
 
 // Hàm để lấy URL hình ảnh từ Firebase Storage
 export const getImageURL = async (fileName) => {
@@ -21,7 +41,6 @@ export const uploadImage = async (file) => {
         const storageRef = ref(storage, `images/${file.name}`);
         await uploadBytes(storageRef, file);
         const url = await getDownloadURL(storageRef);
-        console.log('Image uploaded successfully:', url);
         return url;
     } catch (error) {
         console.error('Error uploading image:', error);

@@ -1,37 +1,39 @@
 'use client'
-import React, { useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import '../styles/SlickCarousel.css';
-import { uploadImage } from '../services/apiService';
+import { getBannerUrls } from '../services/apiService';
 
-const initialBanners = [
-    { src: '/images/banner1.png', alt: 'Banner 1' },
-    { src: '/images/banner2.png', alt: 'Banner 2' },
-    { src: '/images/banner3.png', alt: 'Banner 3' },
+const bannerPaths = [
+    'banners/banner1.jpg',
+    'banners/banner2.jpg',
+    'banners/banner3.jpg',
 ];
 
+const bannerDefault = '../../images/banner1.png'
+
+
 const Banner: React.FC = () => {
-    const [banners, setBanners] = useState(initialBanners);
-    const [currentSlide, setCurrentSlide] = useState(0);
+    const [banners, setBanners] = useState<string[]>([]);
     const [error, setError] = useState<string | null>(null);
+    const sliderRef = useRef<Slider | null>(null);
 
-    const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
-        const file = event.target.files?.[0];
-        if (file) {
+    useEffect(() => {
+        const fetchBanners = async () => {
             try {
-                const imageUrl = await uploadImage(file);
-                console.log('Image URL:', imageUrl);
-
-                // Thêm banner mới vào danh sách
-                setBanners([...banners, { src: imageUrl, alt: 'Uploaded Banner' }]);
+                const urls = await getBannerUrls(bannerPaths);
+                setBanners(urls);
             } catch (err) {
-                setError('Error uploading image');
+                setError('Error fetching banners');
             }
-        }
-    };
+        };
 
+        fetchBanners();
+    }, []);
+
+    // Custom arrow components
     const CustomPrevArrow = (props: any) => {
         const { className, style, onClick } = props;
         return (
@@ -67,7 +69,6 @@ const Banner: React.FC = () => {
         autoplay: true,
         autoplaySpeed: 5000,
         arrows: true,
-        beforeChange: (oldIndex: number, newIndex: number) => setCurrentSlide(newIndex),
         prevArrow: <CustomPrevArrow />,
         nextArrow: <CustomNextArrow />,
     };
@@ -75,15 +76,35 @@ const Banner: React.FC = () => {
     return (
         <div className="flex justify-center mt-2 px-4">
             <div className="relative w-full max-w-7xl">
-                <input type="file" onChange={handleFileChange} />
                 {error && <div className="text-red-500">{error}</div>}
-                <Slider {...settings}>
-                    {banners.map((banner, index) => (
-                        <div key={index} className="relative h-64 md:h-96">
-                            <img src={banner.src} alt={banner.alt} className="w-full h-full object-cover rounded-lg" />
+                {banners.length === 0 ? (
+                    <div className="relative h-64 md:h-96">
+                        <img
+                            src={bannerDefault}
+                            alt={`Banner`}
+                            className="w-full h-full object-cover rounded-lg"
+                        />
+                    </div>
+                ) : (
+                    <Slider ref={sliderRef} {...settings}>
+                        <div className="relative h-64 md:h-96">
+                            <img
+                                src={bannerDefault}
+                                alt={`Banner`}
+                                className="w-full h-full object-cover rounded-lg"
+                            />
                         </div>
-                    ))}
-                </Slider>
+                        {banners.map((src, index) => (
+                            <div key={index} className="relative h-64 md:h-96">
+                                <img
+                                    src={src}
+                                    alt={`Banner ${index + 1}`}
+                                    className="w-full h-full object-cover rounded-lg"
+                                />
+                            </div>
+                        ))}
+                    </Slider>
+                )}
             </div>
         </div>
     );
