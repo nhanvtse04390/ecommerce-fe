@@ -1,80 +1,102 @@
-"use client"
-import React, { useState } from 'react';
-import Slider from 'react-slick';
-import 'slick-carousel/slick/slick.css';
-import 'slick-carousel/slick/slick-theme.css';
-import '../styles/SlickCarousel.css';
+'use client';
+import React, { useEffect, useState } from 'react';
+import '../styles/CustomCarousel.css';
+import { getBannerUrls } from '@/services/apiService';
 
-const banners = [
-    { src: '/images/banner1.png', alt: 'Banner 1' },
-    { src: '/images/banner2.png', alt: 'Banner 2' },
-    { src: '/images/banner3.png', alt: 'Banner 3' },
+const bannerPaths = [
+    'banners/banner1.jpg',
+    'banners/banner2.jpg',
+    'banners/banner3.jpg',
+    'banners/banner4.jpg',
 ];
 
-const additionalImages = [
-    { src: '/images/banner1.png', alt: 'Extra Image 1' },
-    { src: '/images/banner2.png', alt: 'Extra Image 2' },
-];
+const bannerDefault = '/images/banner1.png';
 
 const Banner = () => {
+    const [banners, setBanners] = useState<string[]>([]);
     const [currentSlide, setCurrentSlide] = useState(0);
+    const [loading, setLoading] = useState(true);
+    const [imageLoaded, setImageLoaded] = useState<boolean[]>([]);
 
-    const CustomPrevArrow = (props) => {
-        const { className, style, onClick } = props;
-        return (
-            <button
-                className={`${className} slick-prev text-white bg-black bg-opacity-50 p-2 rounded-full`}
-                style={{ ...style, display: 'block' }}
-                onClick={onClick}
-            >
-                &#9664;
-            </button>
-        );
+    useEffect(() => {
+        const fetchBanners = async () => {
+            try {
+                const urls = await getBannerUrls(bannerPaths);
+                setBanners(urls);
+                setImageLoaded(new Array(urls.length).fill(false));
+                setLoading(false);
+            } catch (err) {
+                console.error('Error fetching banners', err);
+                setLoading(false);
+            }
+        };
+
+        fetchBanners();
+    }, []);
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setCurrentSlide((prev) => (prev + 1) % (banners.length || 1));
+        }, 5000);
+        return () => clearInterval(interval);
+    }, [banners.length]);
+
+    const handleImageLoad = (index: number) => {
+        setImageLoaded(prev => {
+            const newImageLoaded = [...prev];
+            newImageLoaded[index] = true;
+            return newImageLoaded;
+        });
     };
 
-    const CustomNextArrow = (props) => {
-        const { className, style, onClick } = props;
-        return (
-            <button
-                className={`${className} slick-next text-white bg-black bg-opacity-50 p-2 rounded-full`}
-                style={{ ...style, display: 'block' }}
-                onClick={onClick}
-            >
-                &#9654;
-            </button>
-        );
+    const goToNextSlide = () => {
+        setCurrentSlide((prev) => (prev + 1) % banners.length);
     };
 
-    const settings = {
-        dots: true,
-        infinite: true,
-        speed: 500,
-        slidesToShow: 1,
-        slidesToScroll: 1,
-        autoplay: true,
-        autoplaySpeed: 50000,
-        arrows: true,
-        beforeChange: (oldIndex, newIndex) => setCurrentSlide(newIndex),
-        prevArrow: <CustomPrevArrow />,
-        nextArrow: <CustomNextArrow />,
+    const goToPrevSlide = () => {
+        setCurrentSlide((prev) => (prev - 1 + banners.length) % banners.length);
     };
 
     return (
-        <div className="flex w-full">
-            <div className="w-2/3 relative">
-                <Slider {...settings}>
-                    {banners.map((banner, index) => (
-                        <div key={index} className="relative h-64 md:h-96 p-2">
-                            <img src={banner.src} alt={banner.alt} className="w-full h-full object-cover rounded-lg" />
-                        </div>
-                    ))}
-                </Slider>
+        <div className="custom-slider-container">
+            <div className="custom-slider">
+                {loading ? (
+                    <div className="loading-spinner">Loading...</div>
+                ) : (
+                    <>
+                        {banners.map((src, index) => (
+                            <div
+                                key={index}
+                                className={`slide ${currentSlide === index ? 'active' : ''}`}
+                            >
+                                <img
+                                    src={src}
+                                    alt={`Banner ${index + 1}`}
+                                    className="slide-img"
+                                    onLoad={() => handleImageLoad(index)}
+                                    style={{ display: imageLoaded[index] ? 'block' : 'none' }}
+                                />
+                                {!imageLoaded[index] && (
+                                    <div className="loading-placeholder">Loading...</div>
+                                )}
+                            </div>
+                        ))}
+                    </>
+                )}
+                <button className="prev" onClick={goToPrevSlide}>
+                    &#9664;
+                </button>
+                <button className="next" onClick={goToNextSlide}>
+                    &#9654;
+                </button>
             </div>
-            <div className="w-1/3 flex flex-col justify-between space-y-2 p-2">
-                {additionalImages.map((image, index) => (
-                    <div key={index} className="relative flex-1">
-                        <img src={image.src} alt={image.alt} className="w-full h-full object-cover rounded-lg" />
-                    </div>
+            <div className="dots-container">
+                {banners.map((_, index) => (
+                    <span
+                        key={index}
+                        className={`dot ${currentSlide === index ? 'active' : ''}`}
+                        onClick={() => setCurrentSlide(index)}
+                    ></span>
                 ))}
             </div>
         </div>
