@@ -2,13 +2,26 @@
 import React from 'react';
 import { auth, googleProvider } from '../../../services/firebaseConfig';
 import { signInWithPopup } from 'firebase/auth';
+import { useRouter } from 'next/navigation'; // Sử dụng router để chuyển hướng
 
 const Login: React.FC = () => {
+    const router = useRouter();
+
     const handleGoogleLogin = async () => {
         try {
-            await signInWithPopup(auth, googleProvider);
-
-            // Chuyển hướng hoặc xử lý sau khi đăng nhập thành công
+            const result = await signInWithPopup(auth, googleProvider);
+            // Lấy thông tin người dùng từ kết quả
+            const user = result.user;
+            // Lưu thông tin người dùng vào localStorage hoặc trạng thái toàn cục
+            localStorage.setItem('user', JSON.stringify({
+                displayName: user.displayName,
+                photoURL: user.photoURL,
+            }));
+            // Chuyển hướng đến trang chính
+            console.log("vao day")
+            const loginEvent = new Event('userLogin');
+            window.dispatchEvent(loginEvent);
+            router.push('/');
         } catch (error) {
             console.error('Error logging in with Google:', error);
         }
