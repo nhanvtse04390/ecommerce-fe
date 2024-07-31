@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import ProductCard from '@/components/ProductCard';
 import { Product } from '@/types/Product';
-import { getProducts } from '@/services/apiService';
+import { getProducts } from '@/services/productApi';
 import Banner from "@/components/Banner";
 import LoadingPage from '@/components/LoadingPage'; // Import the LoadingPage component
 

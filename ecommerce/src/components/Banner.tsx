@@ -1,7 +1,7 @@
 'use client';
 import React, { useEffect, useState } from 'react';
 import '../styles/CustomCarousel.css';
-import { getBannerUrls } from '@/services/apiService';
+import { getBannerUrls } from '@/services/productApi';
 
 const bannerPaths = [
     'banners/banner1.jpg',
